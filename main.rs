@@ -1,31 +1,46 @@
 use uom::si::{
     energy::joule,
-    f64::{Acceleration, Energy, Length, Mass, Momentum, Time, Velocity},
-    length::meter,
+    f64::{Energy, Length, Mass, Momentum, Time, Velocity},
     mass::{gram, kilogram},
-    time::second,
 };
 
 extern crate uom;
 
-fn main() {
-    let mass_kg: Mass = Mass::new::<kilogram>(120.0);
-    let length = Length::new::<meter>(5.0);
-    let time = Time::new::<second>(1.0);
-    let velocity: Velocity = length / time;
-    let acceleration = calc_acceleration(velocity, time);
-    let mass: Mass = Mass::new::<gram>(mass_kg.get::<gram>());
-    let momentum: Momentum = mass * velocity;
-    let wavelength = calc_wavelength(momentum);
-    //let error = length + time; // error[E0308]: mismatched types
-    println!("{:?}, {:?}, {:?}", mass_kg, acceleration, wavelength);
+static SECOND: Time = seconds(1.0);
+static SPIN_VELOCITY: Velocity = meter_second(463.88889); // 1670 km/h
+static ORBIT_VELOCITY: Velocity = meter_second(30000.0); // 108 000 km/h
+static SUN_VELOCITY: Velocity = meter_second(19444.44444); // 70 000 km/h
+static SOLAR_SYSTEM_VELOCITY: Velocity = meter_second(220000.0); // 792 000 km/h
+static GALAXY_VELOCITY: Velocity = meter_second(694444.44444); // 2 500 000 km/h
+
+const fn seconds(value: f64) -> Time {
+    Time {
+        dimension: std::marker::PhantomData,
+        units: std::marker::PhantomData,
+        value,
+    }
 }
 
-fn calc_acceleration(velocity: Velocity, time: Time) -> Acceleration {
-    velocity / time
+const fn meter_second(value: f64) -> Velocity {
+    Velocity {
+        dimension: std::marker::PhantomData,
+        units: std::marker::PhantomData,
+        value,
+    }
+}
+
+fn main() {
+    let total_velocity: Velocity =
+        SPIN_VELOCITY + ORBIT_VELOCITY + SUN_VELOCITY + SOLAR_SYSTEM_VELOCITY + GALAXY_VELOCITY; // ???
+    let mass_kg: Mass = Mass::new::<kilogram>(120.0);
+    let mass: Mass = Mass::new::<gram>(mass_kg.get::<gram>());
+    let velocity: Velocity = total_velocity;
+    let momentum: Momentum = mass * velocity;
+    let wavelength = calc_wavelength(momentum);
+    println!("{:?}", wavelength);
 }
 
 fn calc_wavelength(momentum: Momentum) -> Length {
-    let planck_constant = Energy::new::<joule>(6.626_070_15e-34) * Time::new::<second>(1.0);
+    let planck_constant = Energy::new::<joule>(6.626_070_15e-34) * SECOND;
     planck_constant / momentum
 }

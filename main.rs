@@ -1,3 +1,5 @@
+use std::env;
+
 use uom::si::{
     energy::joule,
     f64::{Energy, Length, Mass, Momentum, Time, Velocity},
@@ -30,9 +32,11 @@ const fn meter_second(value: f64) -> Velocity {
 }
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    let kg: f64 = args[1].parse().unwrap();
     let total_velocity: Velocity =
         SPIN_VELOCITY + ORBIT_VELOCITY + SUN_VELOCITY + SOLAR_SYSTEM_VELOCITY + GALAXY_VELOCITY; // ???
-    let mass_kg: Mass = Mass::new::<kilogram>(120.0);
+    let mass_kg: Mass = Mass::new::<kilogram>(kg);
     let mass: Mass = Mass::new::<gram>(mass_kg.get::<gram>());
     let velocity: Velocity = total_velocity;
     let momentum: Momentum = mass * velocity;

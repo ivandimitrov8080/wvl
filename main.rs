@@ -1,32 +1,30 @@
-use std::env;
+use std::{env, marker::PhantomData};
 
 use uom::si::{
-    energy::joule,
-    f64::{Energy, Length, Mass, Momentum, Time, Velocity},
+    f64::{Action, Length, Mass, Momentum, Velocity},
     mass::{gram, kilogram},
 };
 
 extern crate uom;
 
-static SECOND: Time = seconds(1.0);
+static PLANCK_CONSTANT: Action = joules_second(6.626_070_15e-34);
 static SPIN_VELOCITY: Velocity = meter_second(463.88889); // 1670 km/h
 static ORBIT_VELOCITY: Velocity = meter_second(30000.0); // 108 000 km/h
 static SUN_VELOCITY: Velocity = meter_second(19444.44444); // 70 000 km/h
 static SOLAR_SYSTEM_VELOCITY: Velocity = meter_second(220000.0); // 792 000 km/h
 static GALAXY_VELOCITY: Velocity = meter_second(694444.44444); // 2 500 000 km/h
 
-const fn seconds(value: f64) -> Time {
-    Time {
-        dimension: std::marker::PhantomData,
-        units: std::marker::PhantomData,
+const fn meter_second(value: f64) -> Velocity {
+    Velocity {
+        dimension: PhantomData,
+        units: PhantomData,
         value,
     }
 }
-
-const fn meter_second(value: f64) -> Velocity {
-    Velocity {
-        dimension: std::marker::PhantomData,
-        units: std::marker::PhantomData,
+const fn joules_second(value: f64) -> Action {
+    Action {
+        dimension: PhantomData,
+        units: PhantomData,
         value,
     }
 }
@@ -45,6 +43,5 @@ fn main() {
 }
 
 fn calc_wavelength(momentum: Momentum) -> Length {
-    let planck_constant = Energy::new::<joule>(6.626_070_15e-34) * SECOND;
-    planck_constant / momentum
+    PLANCK_CONSTANT / momentum
 }

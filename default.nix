@@ -32,7 +32,13 @@
             })
           ];
         };
-        packages.default = pkgs.stdenv.mkDerivation { };
+        packages.default = pkgs.rustPlatform.buildRustPackage {
+          name = "wvl";
+          src = ./.;
+          cargoLock = {
+            lockFile = ./Cargo.lock;
+          };
+        };
       };
     };
 }

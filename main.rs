@@ -1,5 +1,7 @@
+mod triangles;
 use std::{env, marker::PhantomData};
 
+use triangles::triangles;
 use uom::si::{
     f64::{Action, Length, Mass, Momentum, Velocity},
     mass::{gram, kilogram},
@@ -40,6 +42,7 @@ fn main() {
     let momentum: Momentum = mass * velocity;
     let wavelength = calc_wavelength(momentum);
     println!("{:?}", wavelength);
+    triangles();
 }
 
 fn calc_wavelength(momentum: Momentum) -> Length {

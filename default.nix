@@ -11,26 +11,55 @@
             overlays = [ inputs.configuration.overlays.default ];
           };
         };
-        devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            rustc
-            rust-analyzer
-            rustfmt
-            cargo
-            (nvim.extend {
-              plugins = {
-                lsp.servers = {
-                  rust_analyzer = {
-                    installCargo = false;
-                    installRustc = false;
+        devShells = {
+          default = pkgs.mkShell {
+            env = {
+              LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath (
+                with pkgs;
+                [
+                  libudev-zero
+                  alsa-lib
+                  vulkan-loader
+                  libxkbcommon
+                  wayland
+                  xorg.libX11
+                  xorg.libXcursor
+                  xorg.libXi
+                  xorg.libXrandr
+                ]
+              );
+              AMD_VULKAN_ICD = "RADV";
+            };
+            buildInputs = with pkgs; [
+              rustc
+              rust-analyzer
+              rustfmt
+              cargo
+              pkg-config
+              libudev-zero
+              alsa-lib
+              vulkan-loader
+              libxkbcommon
+              wayland
+              xorg.libX11
+              xorg.libXcursor
+              xorg.libXi
+              xorg.libXrandr
+              (nvim.extend {
+                plugins = {
+                  lsp.servers = {
+                    rust_analyzer = {
+                      installCargo = false;
+                      installRustc = false;
+                    };
+                  };
+                  rustaceanvim = {
+                    enable = true;
                   };
                 };
-                rustaceanvim = {
-                  enable = true;
-                };
-              };
-            })
-          ];
+              })
+            ];
+          };
         };
         packages.default = pkgs.rustPlatform.buildRustPackage {
           name = "wvl";

@@ -1,7 +1,9 @@
 mod triangles;
+mod twgpu;
 use std::{env, marker::PhantomData};
 
 use triangles::triangles;
+use twgpu::run;
 use uom::si::{
     f64::{Action, Length, Mass, Momentum, Velocity},
     mass::{gram, kilogram},
@@ -33,7 +35,25 @@ const fn joules_second(value: f64) -> Action {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let kg: f64 = args[1].parse().unwrap();
+    match args[1].as_str() {
+        "wvl" => {
+            let kg: f64 = args[2].parse().unwrap();
+            wvl(kg);
+        }
+        "tri" => {
+            triangles();
+        }
+        "twgpu" => {
+            match run() {
+                Ok(_) => print!("alright"),
+                Err(_) => print!("OY WAT R U DOIN"),
+            };
+        }
+        _ => panic!("OY"),
+    }
+}
+
+fn wvl(kg: f64) {
     let total_velocity: Velocity =
         SPIN_VELOCITY + ORBIT_VELOCITY + SUN_VELOCITY + SOLAR_SYSTEM_VELOCITY + GALAXY_VELOCITY; // ???
     let mass_kg: Mass = Mass::new::<kilogram>(kg);
@@ -42,7 +62,6 @@ fn main() {
     let momentum: Momentum = mass * velocity;
     let wavelength = calc_wavelength(momentum);
     println!("{:?}", wavelength);
-    triangles();
 }
 
 fn calc_wavelength(momentum: Momentum) -> Length {

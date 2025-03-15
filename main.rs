@@ -1,11 +1,18 @@
+mod piblocks;
 mod triangles;
 mod twgpu;
 mod wvl;
 use std::{env, marker::PhantomData};
 
+use piblocks::calc;
 use triangles::triangles;
 use twgpu::run;
-use uom::si::f64::{Action, Velocity};
+use uom::si::{
+    energy::Energy,
+    f64::{Action, Mass, Velocity},
+    mass::kilogram,
+    velocity::meter_per_second,
+};
 use wvl::wvl;
 
 extern crate uom;
@@ -32,12 +39,20 @@ const fn joules_second(value: f64) -> Action {
     }
 }
 
+const fn energy(m: Mass, v: Velocity) -> Energy {
+    Energy {
+        dimension: PhantomData,
+        units: PhantomData,
+        value: 0.5 * m * v * v,
+    }
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     match args[1].as_str() {
         "wvl" => {
             let kg: f64 = args[2].parse().unwrap();
-            wvl(kg);
+            wvl(Mass::new::<kilogram>(kg));
         }
         "tri" => {
             triangles();
@@ -49,10 +64,12 @@ fn main() {
             };
         }
         "piblocks" => {
-            match run() {
-                Ok(_) => print!("alright"),
-                Err(_) => print!("OY WAT R U DOIN"),
-            };
+            let m: f64 = args[2].parse().unwrap();
+            let v: f64 = args[2].parse().unwrap();
+            calc(
+                Mass::new::<kilogram>(m),
+                Velocity::new::<meter_per_second>(v),
+            );
         }
         _ => panic!("OY"),
     }

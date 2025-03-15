@@ -47,6 +47,7 @@
               xorg.libXrandr
               (nvim.extend {
                 plugins = {
+                  avante.enable = true;
                   lsp.servers = {
                     rust_analyzer = {
                       installCargo = false;

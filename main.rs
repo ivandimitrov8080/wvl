@@ -8,8 +8,7 @@ use piblocks::calc;
 use triangles::triangles;
 use twgpu::run;
 use uom::si::{
-    energy::Energy,
-    f64::{Action, Mass, Velocity},
+    f64::{Action, Energy, Mass, Velocity},
     mass::kilogram,
     velocity::meter_per_second,
 };
@@ -43,7 +42,7 @@ const fn energy(m: Mass, v: Velocity) -> Energy {
     Energy {
         dimension: PhantomData,
         units: PhantomData,
-        value: 0.5 * m * v * v,
+        value: 0.5 * m.value * v.value * v.value,
     }
 }
 

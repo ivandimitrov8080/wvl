@@ -6,7 +6,7 @@ use uom::si::{
 
 use crate::energy;
 
-pub fn calc(block_mass: Mass, block_velocity: Velocity) -> u32 {
+pub fn piblocks(block_mass: Mass, block_velocity: Velocity) -> u32 {
     let collisions = 0;
     let m1 = Mass::new::<kilogram>(1f64);
     let v1 = Velocity::new::<meter_per_second>(1f64);

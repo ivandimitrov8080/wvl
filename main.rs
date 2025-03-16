@@ -4,7 +4,7 @@ mod twgpu;
 mod wvl;
 use std::{env, marker::PhantomData};
 
-use piblocks::calc;
+use piblocks::piblocks;
 use triangles::triangles;
 use twgpu::run;
 use uom::si::{
@@ -65,7 +65,7 @@ fn main() {
         "piblocks" => {
             let m: f64 = args[2].parse().unwrap();
             let v: f64 = args[2].parse().unwrap();
-            calc(
+            piblocks(
                 Mass::new::<kilogram>(m),
                 Velocity::new::<meter_per_second>(v),
             );

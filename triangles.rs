@@ -48,6 +48,10 @@ fn camera_movement(
 ) {
     for mut transform in query.iter_mut() {
         let mut direction = Vec3::ZERO;
+        let mut speed = 0.1;
+        if keyboard_input.pressed(KeyCode::ShiftLeft) {
+            speed = 0.8;
+        }
         if keyboard_input.pressed(KeyCode::KeyW) {
             direction.z -= 1.0;
         }
@@ -62,7 +66,8 @@ fn camera_movement(
         }
         let forward = transform.rotation * Vec3::Z;
         let right = transform.rotation * Vec3::X;
-        transform.translation += (forward * direction.z + right * direction.x) * 0.1;
+        let left = transform.rotation * Vec3::Y;
+        transform.translation += (forward * direction.z + right * direction.x + left * direction.y) * speed;
 
         for event in mouse_motion_reader.read() {
             let yaw = Quat::from_rotation_y(-event.delta.x * 0.001);
@@ -106,3 +111,4 @@ pub fn triangles() {
         .add_plugins(HelloPlugin)
         .run();
 }
+

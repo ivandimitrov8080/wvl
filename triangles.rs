@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{input::mouse::MouseMotion, prelude::*};
 
 pub struct HelloPlugin;
 
@@ -38,6 +38,7 @@ fn setup(
 
 fn camera_movement(
     keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut mouse_motion_reader: EventReader<MouseMotion>,
     mut query: Query<&mut Transform, With<Camera3d>>,
 ) {
     for mut transform in query.iter_mut() {
@@ -55,6 +56,12 @@ fn camera_movement(
             direction.x += 1.0;
         }
         transform.translation += direction * 0.1;
+
+        for event in mouse_motion_reader.read() {
+            let rotation = Quat::from_rotation_y(-event.delta.x * 0.001)
+                * Quat::from_rotation_x(-event.delta.y * 0.001);
+            transform.rotation = rotation * transform.rotation;
+        }
     }
 }
 

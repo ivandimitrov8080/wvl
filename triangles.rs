@@ -1,4 +1,8 @@
-use bevy::{input::mouse::MouseMotion, prelude::*};
+use bevy::{
+    input::mouse::MouseMotion,
+    prelude::*,
+    window::{CursorGrabMode, PrimaryWindow},
+};
 
 pub struct HelloPlugin;
 
@@ -40,6 +44,7 @@ fn camera_movement(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut mouse_motion_reader: EventReader<MouseMotion>,
     mut query: Query<&mut Transform, With<Camera3d>>,
+    mut q_windows: Query<&mut Window, With<PrimaryWindow>>,
 ) {
     for mut transform in query.iter_mut() {
         let mut direction = Vec3::ZERO;
@@ -63,6 +68,27 @@ fn camera_movement(
             transform.rotation = rotation * transform.rotation;
         }
     }
+
+    if keyboard_input.just_pressed(KeyCode::KeyG) {
+        cursor_grab(&mut q_windows);
+    }
+    if keyboard_input.just_pressed(KeyCode::KeyU) {
+        cursor_ungrab(&mut q_windows);
+    }
+}
+
+fn cursor_ungrab(q_windows: &mut Query<&mut Window, With<PrimaryWindow>>) {
+    let mut primary_window = q_windows.single_mut();
+
+    primary_window.cursor_options.grab_mode = CursorGrabMode::None;
+    primary_window.cursor_options.visible = true;
+}
+
+fn cursor_grab(q_windows: &mut Query<&mut Window, With<PrimaryWindow>>) {
+    let mut primary_window = q_windows.single_mut();
+
+    primary_window.cursor_options.grab_mode = CursorGrabMode::Locked;
+    primary_window.cursor_options.visible = false;
 }
 
 impl Plugin for HelloPlugin {

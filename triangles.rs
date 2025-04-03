@@ -60,12 +60,14 @@ fn camera_movement(
         if keyboard_input.pressed(KeyCode::KeyD) {
             direction.x += 1.0;
         }
-        transform.translation += direction * 0.1;
+        let forward = transform.rotation * Vec3::Z;
+        let right = transform.rotation * Vec3::X;
+        transform.translation += (forward * direction.z + right * direction.x) * 0.1;
 
         for event in mouse_motion_reader.read() {
-            let rotation = Quat::from_rotation_y(-event.delta.x * 0.001)
-                * Quat::from_rotation_x(-event.delta.y * 0.001);
-            transform.rotation = rotation * transform.rotation;
+            let yaw = Quat::from_rotation_y(-event.delta.x * 0.001);
+            let pitch = Quat::from_rotation_x(-event.delta.y * 0.001);
+            transform.rotation = yaw * transform.rotation * pitch;
         }
     }
 

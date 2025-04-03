@@ -59,6 +59,9 @@
                     # };
                     settings = {
                       provider = "openai";
+                      openai = {
+                        model = "gpt-4o";
+                      };
                     };
                   };
                   lsp.servers = {

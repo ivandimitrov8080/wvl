@@ -13,12 +13,14 @@ fn setup(
         MeshMaterial3d(materials.add(Color::WHITE)),
         Transform::from_rotation(Quat::from_rotation_x(-std::f32::consts::FRAC_PI_2)),
     ));
-    // cube
-    commands.spawn((
-        Mesh3d(meshes.add(Cuboid::new(1.0, 1.0, 1.0))),
-        MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
-        Transform::from_xyz(0.0, 0.5, 0.0),
-    ));
+    // cubes
+    for i in 0..100 {
+        commands.spawn((
+            Mesh3d(meshes.add(Cuboid::new(1.0, 1.0, 1.0))),
+            MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
+            Transform::from_xyz(i as f32, 0.5, 0.0),
+        ));
+    }
     // light
     commands.spawn((
         PointLight {
@@ -34,9 +36,32 @@ fn setup(
     ));
 }
 
+fn camera_movement(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut query: Query<&mut Transform, With<Camera3d>>,
+) {
+    for mut transform in query.iter_mut() {
+        let mut direction = Vec3::ZERO;
+        if keyboard_input.pressed(KeyCode::KeyW) {
+            direction.z -= 1.0;
+        }
+        if keyboard_input.pressed(KeyCode::KeyS) {
+            direction.z += 1.0;
+        }
+        if keyboard_input.pressed(KeyCode::KeyA) {
+            direction.x -= 1.0;
+        }
+        if keyboard_input.pressed(KeyCode::KeyD) {
+            direction.x += 1.0;
+        }
+        transform.translation += direction * 0.1;
+    }
+}
+
 impl Plugin for HelloPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup);
+        app.add_systems(Startup, setup)
+            .add_systems(Update, camera_movement);
     }
 }
 

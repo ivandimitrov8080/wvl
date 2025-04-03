@@ -66,8 +66,7 @@ fn camera_movement(
         }
         let forward = transform.rotation * Vec3::Z;
         let right = transform.rotation * Vec3::X;
-        let left = transform.rotation * Vec3::Y;
-        transform.translation += (forward * direction.z + right * direction.x + left * direction.y) * speed;
+        transform.translation += (forward * direction.z + right * direction.x) * speed;
 
         for event in mouse_motion_reader.read() {
             let yaw = Quat::from_rotation_y(-event.delta.x * 0.001);
@@ -111,4 +110,3 @@ pub fn triangles() {
         .add_plugins(HelloPlugin)
         .run();
 }
-

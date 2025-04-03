@@ -11,20 +11,54 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    // circular base
+    // walls
+    let wall_material = materials.add(Color::srgb(0.5, 0.5, 0.5));
+    let wall_thickness = 1.0;
+    let wall_height = 10.0;
+    let arena_size = 500.0;
+    // arena floor
     commands.spawn((
-        Mesh3d(meshes.add(Circle::new(4.0))),
-        MeshMaterial3d(materials.add(Color::WHITE)),
+        Mesh3d(
+            meshes.add(
+                Plane3d::default()
+                    .mesh()
+                    .size(arena_size, arena_size)
+                    .subdivisions(100),
+            ),
+        ),
+        MeshMaterial3d(materials.add(Color::srgb(20.0, 20.0, 20.0))),
         Transform::from_rotation(Quat::from_rotation_x(-std::f32::consts::FRAC_PI_2)),
     ));
-    // cubes
-    for i in 0..100 {
-        commands.spawn((
-            Mesh3d(meshes.add(Cuboid::new(1.0, 1.0, 1.0))),
-            MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
-            Transform::from_xyz(i as f32, 0.5, 0.0),
-        ));
-    }
+    // front wall
+    commands.spawn((
+        Mesh3d(meshes.add(Cuboid::new(arena_size, wall_height, wall_thickness))),
+        MeshMaterial3d(wall_material.clone()),
+        Transform::from_xyz(0.0, wall_height / 2.0, -arena_size / 2.0),
+    ));
+    // back wall
+    commands.spawn((
+        Mesh3d(meshes.add(Cuboid::new(arena_size, wall_height, wall_thickness))),
+        MeshMaterial3d(wall_material.clone()),
+        Transform::from_xyz(0.0, wall_height / 2.0, arena_size / 2.0),
+    ));
+    // left wall
+    commands.spawn((
+        Mesh3d(meshes.add(Cuboid::new(wall_thickness, wall_height, arena_size))),
+        MeshMaterial3d(wall_material.clone()),
+        Transform::from_xyz(-arena_size / 2.0, wall_height / 2.0, 0.0),
+    ));
+    // right wall
+    commands.spawn((
+        Mesh3d(meshes.add(Cuboid::new(wall_thickness, wall_height, arena_size))),
+        MeshMaterial3d(wall_material.clone()),
+        Transform::from_xyz(arena_size / 2.0, wall_height / 2.0, 0.0),
+    ));
+    // skybox
+    commands.spawn((
+        Mesh3d(meshes.add(Cuboid::new(arena_size, wall_thickness, arena_size))),
+        MeshMaterial3d(materials.add(Color::srgb(0.1, 0.1, 0.3))),
+        Transform::from_xyz(0.0, wall_height + wall_thickness / 2.0, 0.0),
+    ));
     // light
     commands.spawn((
         PointLight {

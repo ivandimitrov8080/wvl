@@ -65,28 +65,48 @@ fn setup(
         Camera3d::default(),
         Transform::from_xyz(-2.5, 4.5, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
-    // player-controlled character
+    // auto dick
     commands.spawn((
         Mesh3d(meshes.add(Cuboid::new(1.0, 2.0, 1.0))), // body
         MeshMaterial3d(materials.add(Color::srgb(1.0, 0.8, 0.6))),
-        Transform::from_xyz(0.0, 1.0, 0.0),
+        Transform::from_xyz(0.0, 1.0, 0.0).with_rotation(Quat::from_rotation_z(0.5)),
+        MovingCharacter,
     ));
     commands.spawn((
         Mesh3d(meshes.add(Sphere::new(0.5))), // head
         MeshMaterial3d(materials.add(Color::srgb(1.0, 0.8, 0.6))),
-        Transform::from_xyz(0.0, 2.5, 0.0),
+        Transform::from_xyz(0.0, 2.5, 0.0).with_rotation(Quat::from_rotation_z(0.5)),
+        MovingCharacter,
     ));
     commands.spawn((
         Mesh3d(meshes.add(Sphere::new(0.3))), // left ball
         MeshMaterial3d(materials.add(Color::srgb(1.0, 0.8, 0.6))),
-        Transform::from_xyz(-0.5, 0.3, 0.0),
+        Transform::from_xyz(-0.5, 0.3, 0.0).with_rotation(Quat::from_rotation_z(0.5)),
+        MovingCharacter,
     ));
     commands.spawn((
         Mesh3d(meshes.add(Sphere::new(0.3))), // right ball
         MeshMaterial3d(materials.add(Color::srgb(1.0, 0.8, 0.6))),
-        Transform::from_xyz(0.5, 0.3, 0.0),
+        Transform::from_xyz(0.5, 0.3, 0.0).with_rotation(Quat::from_rotation_z(0.5)),
+        MovingCharacter,
     ));
 }
+
+fn moving_character_system(
+    time: Res<Time>,
+    mut query: Query<&mut Transform, With<MovingCharacter>>,
+) {
+    let speed = 20.0;
+    for mut transform in query.iter_mut() {
+        transform.translation.x += speed * time.delta_secs();
+        if transform.translation.x > 250.0 || transform.translation.x < -250.0 {
+            transform.translation.x = -transform.translation.x;
+        }
+    }
+}
+
+#[derive(Component)]
+struct MovingCharacter;
 
 fn camera_movement(
     keyboard_input: Res<ButtonInput<KeyCode>>,
@@ -152,7 +172,8 @@ fn cursor_grab(q_windows: &mut Query<&mut Window, With<PrimaryWindow>>) {
 impl Plugin for HelloPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, setup)
-            .add_systems(Update, camera_movement);
+            .add_systems(Update, camera_movement)
+            .add_systems(Update, moving_character_system);
     }
 }
 

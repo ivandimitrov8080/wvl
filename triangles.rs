@@ -13,7 +13,7 @@ fn setup(
 ) {
     // walls
     let wall_material = materials.add(Color::srgb(0.5, 0.5, 0.5));
-    let wall_thickness = 1.0;
+    let wall_thickness = 5.0;
     let wall_height = 10.0;
     let arena_size = 500.0;
     // arena floor
@@ -27,7 +27,6 @@ fn setup(
             ),
         ),
         MeshMaterial3d(materials.add(Color::srgb(20.0, 20.0, 20.0))),
-        Transform::from_rotation(Quat::from_rotation_x(-std::f32::consts::FRAC_PI_2)),
     ));
     // front wall
     commands.spawn((
@@ -52,12 +51,6 @@ fn setup(
         Mesh3d(meshes.add(Cuboid::new(wall_thickness, wall_height, arena_size))),
         MeshMaterial3d(wall_material.clone()),
         Transform::from_xyz(arena_size / 2.0, wall_height / 2.0, 0.0),
-    ));
-    // skybox
-    commands.spawn((
-        Mesh3d(meshes.add(Cuboid::new(arena_size, wall_thickness, arena_size))),
-        MeshMaterial3d(materials.add(Color::srgb(0.1, 0.1, 0.3))),
-        Transform::from_xyz(0.0, wall_height + wall_thickness / 2.0, 0.0),
     ));
     // light
     commands.spawn((
@@ -84,7 +77,7 @@ fn camera_movement(
         let mut direction = Vec3::ZERO;
         let mut speed = 0.1;
         if keyboard_input.pressed(KeyCode::ShiftLeft) {
-            speed = 0.8;
+            speed = 20.0;
         }
         if keyboard_input.pressed(KeyCode::KeyW) {
             direction.z -= 1.0;

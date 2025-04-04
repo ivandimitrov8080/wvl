@@ -65,6 +65,27 @@ fn setup(
         Camera3d::default(),
         Transform::from_xyz(-2.5, 4.5, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
+    // player-controlled character
+    commands.spawn((
+        Mesh3d(meshes.add(Cuboid::new(1.0, 2.0, 1.0))), // body
+        MeshMaterial3d(materials.add(Color::srgb(1.0, 0.8, 0.6))),
+        Transform::from_xyz(0.0, 1.0, 0.0),
+    ));
+    commands.spawn((
+        Mesh3d(meshes.add(Sphere::new(0.5))), // head
+        MeshMaterial3d(materials.add(Color::srgb(1.0, 0.8, 0.6))),
+        Transform::from_xyz(0.0, 2.5, 0.0),
+    ));
+    commands.spawn((
+        Mesh3d(meshes.add(Sphere::new(0.3))), // left ball
+        MeshMaterial3d(materials.add(Color::srgb(1.0, 0.8, 0.6))),
+        Transform::from_xyz(-0.5, 0.3, 0.0),
+    ));
+    commands.spawn((
+        Mesh3d(meshes.add(Sphere::new(0.3))), // right ball
+        MeshMaterial3d(materials.add(Color::srgb(1.0, 0.8, 0.6))),
+        Transform::from_xyz(0.5, 0.3, 0.0),
+    ));
 }
 
 fn camera_movement(
@@ -72,6 +93,7 @@ fn camera_movement(
     mut mouse_motion_reader: EventReader<MouseMotion>,
     mut query: Query<&mut Transform, With<Camera3d>>,
     mut q_windows: Query<&mut Window, With<PrimaryWindow>>,
+    mut writer: EventWriter<AppExit>,
 ) {
     for mut transform in query.iter_mut() {
         let mut direction = Vec3::ZERO;
@@ -107,6 +129,9 @@ fn camera_movement(
     }
     if keyboard_input.just_pressed(KeyCode::KeyU) {
         cursor_ungrab(&mut q_windows);
+    }
+    if keyboard_input.just_pressed(KeyCode::KeyQ) {
+        writer.send(AppExit::Success);
     }
 }
 

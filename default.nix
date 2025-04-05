@@ -49,20 +49,20 @@
                 plugins = {
                   avante = {
                     enable = true;
-                    # settings = {
-                    #   provider = "ollama";
-                    #   vendors = {
-                    #     ollama = {
-                    #       model = "qwen14b:latest";
-                    #     };
-                    #   };
-                    # };
                     settings = {
-                      provider = "openai";
-                      openai = {
-                        model = "gpt-4o";
+                      provider = "ollama";
+                      vendors = {
+                        ollama = {
+                          model = "qwen:14b";
+                        };
                       };
                     };
+                    # settings = {
+                    #   provider = "openai";
+                    #   openai = {
+                    #     model = "gpt-4o";
+                    #   };
+                    # };
                   };
                   lsp.servers = {
                     rust_analyzer = {
